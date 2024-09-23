@@ -9,7 +9,12 @@ class Config:
         self._prompt = ""
         self._temp = ""
 
-    def load(self):
+    @property
+    def schema(self) -> t.Schema:
+        schema = self._load()._validate()._parse()
+        return schema
+
+    def _load(self):
         self._name = os.getenv(c.AI_MODEL_NAME, "")
         self._port = os.getenv(c.AI_MODEL_PORT, "")
         self._prompt = os.getenv(c.AI_MODEL_PROMPT, "")
@@ -17,7 +22,7 @@ class Config:
 
         return self
 
-    def validate(self):
+    def _validate(self):
         if self._name == "":
             raise ValueError(f"You must provide a value for {c.AI_MODEL_NAME}")
 
@@ -32,7 +37,7 @@ class Config:
 
         return self
 
-    def parse(self) -> t.Schema:
+    def _parse(self) -> t.Schema:
         temp = float(self._temp)
 
         return {

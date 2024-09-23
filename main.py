@@ -1,5 +1,10 @@
+from config.schema import Config
+
+
 def main():
-    print("Code review copilot")
+    schema = Config().schema
+
+    print(schema)
 
 
 if __name__ == "__main__":
