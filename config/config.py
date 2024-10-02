@@ -46,7 +46,6 @@ class Config(ABC):
 
 
 class ModelConfig(Config):
-
     @property
     def schema(self) -> Schema:
         loaded_args = self.load()
