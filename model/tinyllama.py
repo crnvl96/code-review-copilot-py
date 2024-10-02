@@ -1,19 +1,47 @@
+from abc import ABC, abstractmethod
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_ollama.llms import OllamaLLM
 
-template = """Question: {question}
+from config.config import Config
+
+
+LlmContainerBaseUrl = "http://localhost:"
+Template = """{prompt}
 
 Code:
+
 ```{lang}
 {code}
 ```
 
-Answer: Let's give a brief and quick explanation about the piece of code above."""
+"""
 
-prompt = ChatPromptTemplate.from_template(template)
 
-model = OllamaLLM(model="llama3.1")
+class OllamaModel(ABC):
+    @abstractmethod
+    def generateChain(self):
+        pass
 
-chain = prompt | model
 
-print(chain.invoke({"question": "What is LangChain?"}))
+class TinyLlama(OllamaModel):
+    def __init__(self, config: Config):
+        self.config = config
+        self.template = Template
+
+        # TODO: Add file body from github here
+        self.code = "// file body from github will come here"
+
+        self.prompt = config.schema["prompt"]
+        self.name = config.schema["name"]
+        self.lang = config.schema["lang"]
+        self.temp = config.schema["temp"]
+        self.port = config.schema["port"]
+
+    def generateChain(self):
+        template = ChatPromptTemplate.from_template(self.template)
+        model = OllamaLLM(model=self.name)
+        chain = template | model
+
+        print(
+            chain.invoke({"prompt": self.prompt, "lang": self.lang, "code": self.code})
+        )

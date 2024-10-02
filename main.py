@@ -1,10 +1,10 @@
-from config.schema import Config
+from config.config import ModelConfig
 
 
 def main():
-    schema = Config().schema
+    modelConfig = ModelConfig()
 
-    print(schema)
+    print(modelConfig.schema)
 
 
 if __name__ == "__main__":
