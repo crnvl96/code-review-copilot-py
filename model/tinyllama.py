@@ -9,7 +9,7 @@ LlmContainerBaseUrl = "http://localhost:"
 
 class OllamaModel(ABC):
     @abstractmethod
-    def generateChain(self, content: str):
+    def generateChain(self, content: str) -> str | list[str | dict[str, str]]:
         pass
 
 
@@ -39,4 +39,5 @@ class TinyLlama(OllamaModel):
         ]
 
         res = llm.invoke(prompt)
-        print(res.content)
+
+        return res.content
