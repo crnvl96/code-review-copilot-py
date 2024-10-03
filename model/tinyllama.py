@@ -1,20 +1,10 @@
 from abc import ABC, abstractmethod
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_ollama.llms import OllamaLLM
+from langchain_ollama import ChatOllama
 
-from config.config import Config
+from config.tinyllama_config import Config
 
 
 LlmContainerBaseUrl = "http://localhost:"
-Template = """{prompt}
-
-Code:
-
-```{lang}
-{content}
-```
-
-"""
 
 
 class OllamaModel(ABC):
@@ -26,19 +16,27 @@ class OllamaModel(ABC):
 class TinyLlama(OllamaModel):
     def __init__(self, config: Config):
         self.config = config
-        self.template = Template
-
-        self.prompt = config.schema["prompt"]
         self.name = config.schema["name"]
-        self.lang = config.schema["lang"]
         self.temp = config.schema["temp"]
         self.port = config.schema["port"]
 
-    def generateChain(self, content: str):
-        template = ChatPromptTemplate.from_template(self.template)
-        model = OllamaLLM(model=self.name)
-        chain = template | model
+        self.prompt = config.schema["prompt"]
+        self.lang = config.schema["lang"]
 
-        print(
-            chain.invoke({"prompt": self.prompt, "lang": self.lang, "content": content})
+    def generateChain(self, content: str):
+        llm = ChatOllama(
+            model=self.name,
+            temperature=self.temp,
+            base_url=f"{LlmContainerBaseUrl}{self.port}",
         )
+
+        prompt = [
+            (
+                "system",
+                f"You are a experienced programmer that explains snippets of code in {self.lang}. Explain the user code.",
+            ),
+            ("human", f"{self.prompt}"),
+        ]
+
+        res = llm.invoke(prompt)
+        print(res.content)

@@ -1,6 +1,6 @@
-from config.config import ModelConfig
+from config.tinyllama_config import ModelConfig
 from model.tinyllama import TinyLlama
-from platform.github import Github, Platform
+from pipeline.github_pipe import Github, Platform
 
 
 class CodeReview:
