@@ -20,7 +20,7 @@ class TinyLlama(OllamaModel):
         self.temp = config.schema["temp"]
         self.port = config.schema["port"]
 
-        self.prompt = config.schema["prompt"]
+        self.prompt = config.schema["prompt"]  # not being actually used right now
         self.lang = config.schema["lang"]
 
     def generateChain(self, content: str):
@@ -35,7 +35,7 @@ class TinyLlama(OllamaModel):
                 "system",
                 f"You are a experienced programmer that explains snippets of code in {self.lang}. Explain the user code.",
             ),
-            ("human", f"{self.prompt}"),
+            ("human", f"{content}"),
         ]
 
         res = llm.invoke(prompt)
